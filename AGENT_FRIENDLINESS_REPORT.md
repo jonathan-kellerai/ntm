@@ -140,7 +140,7 @@ None - comprehensive coverage
 
 ### 5.3 Low Priority (P3)
 
-1. Add `--robot-schema` flag for JSON Schema emission
+1. ~~Add `--robot-schema` flag for JSON Schema emission~~ **IMPLEMENTED** — `--robot-schema` and its alias `--schema` are present in `ntm --help`
 2. Document token savings metrics
 
 ## 6. JSON Output Structure

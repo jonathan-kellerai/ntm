@@ -348,7 +348,7 @@ Robot command outputs follow consistent semantics for absent, null, and empty fi
 
 A mail-like layer that lets coding agents coordinate asynchronously via MCP tools and resources. Provides identities, inbox/outbox, searchable threads, and advisory file reservations with human-auditable artifacts in Git.
 
-Agent Mail is already available as an MCP server; do not treat it as a CLI you must shell out to. MCP Agent Mail *should* be available to you as an MCP server; if it's not, then flag to the user. They might need to start Agent Mail using the `am` alias or by running `cd "<directory_where_they_installed_agent_mail>/mcp_agent_mail" && bash scripts/run_server_with_token.sh` if the alias isn't available or isn't working.
+Agent Mail is already available as an MCP server; do not treat it as a CLI you must shell out to. MCP Agent Mail *should* be available to you as an MCP server; if it's not, then flag to the user. They might need to start Agent Mail using `am serve-http` (default port 8765) if the MCP server is not running.
 
 ### Why It's Useful
 
@@ -421,6 +421,18 @@ Server-side tools (for orchestrators) include: `ensure_product(product_key|name)
 - `"from_agent not registered"`: Always `register_agent` in the correct `project_key` first
 - `"FILE_RESERVATION_CONFLICT"`: Adjust patterns, wait for expiry, or use non-exclusive reservation
 - **Auth errors:** If JWT+JWKS enabled, include bearer token with matching `kid`; static bearer only when JWT disabled
+
+---
+
+## ntm beads — Issue Sync (No Daemon Mode)
+
+`ntm beads` exposes a `daemon` subcommand group in its help output (`ntm beads daemon start|stop|status|health|metrics`), but **bd does not support daemon mode**. Every daemon subcommand returns an error:
+
+```
+Error: bd does not support daemon mode; use 'bd sync' to sync issue state manually
+```
+
+To sync beads state, use `bd sync` (or `br sync --flush-only`) manually. Do not attempt to start, stop, or query any `ntm beads daemon` subcommand.
 
 ---
 
