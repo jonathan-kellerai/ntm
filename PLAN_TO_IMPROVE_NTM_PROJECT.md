@@ -145,7 +145,7 @@ This plan outlines strategic improvements to elevate **NTM** from a capable powe
 │                              Data Plane                                │
 ├──────────────────────────────────────────────────────────────────────┤
 │ tmux adapter   Agent adapters    Tool adapters     Daemon supervisor   │
-│ (panes)        (cc/cod/gmi)      (am/bv/bd/cm/...) (cm serve/bd daemon)│
+│ (panes)        (cc/cod/gmi)      (am/bv/bd/cm/...) (cm serve/bd sync)│
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -2649,7 +2649,7 @@ bd sync  # Developer must remember to run this
 
 ```bash
 # BD has a daemon mode that NTM ignores
-bd daemon --start --auto-commit --interval 5s --health --metrics --json
+bd sync --auto-commit --interval 5s --health --metrics --json
 ```
 
 **Policy change**: `--auto-push` is **disabled by default** and requires:
@@ -3438,7 +3438,7 @@ These Tier 0 integrations, combined with the Tier 1 underexplored features (CASS
 - **Protects against accidents** (destructive cmd hooks)
 - **Coordinates actively** (intelligent coordinator)
 - **Messages seamlessly** (unified messaging)
-- **Syncs continuously** (bd daemon)
+- **Syncs continuously** (bd sync)
 
 The result is a closed-loop system where each cycle compounds, making the entire development flywheel spin faster and more reliably.
 

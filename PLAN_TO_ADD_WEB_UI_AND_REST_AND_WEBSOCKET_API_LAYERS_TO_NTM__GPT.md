@@ -60,7 +60,7 @@ This section is based on real code paths in this repo. These are the foundations
 - This is a **hard flywheel loop**: Scan → Beads → BV → Context → Send.
 
 ### 1.8 Supervisor + Daemons
-- `internal/supervisor/supervisor.go` manages long‑running daemons (cm server, bd daemon)
+- `internal/supervisor/supervisor.go` manages long‑running daemons (cm server, bd sync)
 - Tracks PID, ports, health checks, restarts, logs
 - This must be surfaced in API + UI for operational visibility.
 
@@ -153,7 +153,7 @@ We will refactor CLI commands into reusable services:
 - `ContextService` → context packs
 - `ToolingService` → doctor + adapters
 - `ApprovalService` → approvals/SLB
-- `BeadsService` → bd daemon
+- `BeadsService` → bd sync
 - `ScannerService` → UBS + bridge
 
 CLI will call these services. REST will call these services. This is the parity guarantee.

@@ -56,7 +56,7 @@ graph TD
 The existing `internal/supervisor` package will be leveraged by `ntm serve` to manage the lifecycle of auxiliary daemons, ensuring a zero-config startup:
 *   **`cm` (CASS Memory):** Started via `cm serve`.
 *   **`am` (Agent Mail):** Started via `mcp-agent-mail serve` (if local).
-*   **`bd` (Beads):** Started via `bd daemon`.
+*   **`bd` (Beads):** Started via `bd sync`.
 
 ---
 

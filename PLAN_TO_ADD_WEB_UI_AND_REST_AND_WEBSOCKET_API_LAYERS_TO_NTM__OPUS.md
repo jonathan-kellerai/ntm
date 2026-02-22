@@ -146,7 +146,7 @@ This section maps actual code paths. These are the foundations we must reuse, no
 - This is a **hard flywheel loop**: Scan → Beads → BV → Context → Send
 
 ### 2.8 Supervisor + Daemons
-- `internal/supervisor/supervisor.go` manages long-running daemons (cm server, bd daemon)
+- `internal/supervisor/supervisor.go` manages long-running daemons (cm server, bd sync)
 - Tracks PID, ports, health checks, restarts, logs
 - This must be surfaced in API + UI for operational visibility
 
@@ -465,7 +465,7 @@ The existing `internal/supervisor` package is configured with `DefaultSpecs` to 
 
 - **`cm` (CASS Memory):** Started via `cm serve`
 - **`am` (Agent Mail):** Started via `mcp-agent-mail serve` (if local)
-- **`bd` (Beads):** Started via `bd daemon`
+- **`bd` (Beads):** Started via `bd sync`
 
 The API Gateway will communicate with these daemons via their respective internal clients (`agentmail.Client`, `cm.Client`), acting as a unified proxy.
 
@@ -559,7 +559,7 @@ Refactor CLI commands into reusable services that both CLI and API call:
 | `ContextService` | build, show, stats, clear |
 | `ToolingService` | doctor, adapters, health |
 | `ApprovalService` | approvals, SLB |
-| `BeadsService` | bd daemon, triage, insights |
+| `BeadsService` | bd sync, triage, insights |
 | `ScannerService` | UBS, bridge to beads |
 
 ### 6.5 Parity Gate CI Tests
@@ -1236,7 +1236,7 @@ interface ReservationEvent {
 | `GET` | `/beads/plan` | `bv --robot-plan` | Parallel execution plan |
 | `GET` | `/beads/stats` | `bd stats` | Project statistics |
 | `GET` | `/beads/daemon/status` | — | Daemon status |
-| `POST` | `/beads/daemon/start` | `bd daemon` | Start daemon |
+| `POST` | `/beads/daemon/start` | `bd sync` | Start daemon |
 | `POST` | `/beads/daemon/stop` | — | Stop daemon |
 | `POST` | `/beads/sync` | `bd sync` | Sync with git |
 
