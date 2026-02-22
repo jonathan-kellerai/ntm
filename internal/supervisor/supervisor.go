@@ -1,4 +1,4 @@
-// Package supervisor manages the lifecycle of long-running daemons (cm serve, bd daemon)
+// Package supervisor manages the lifecycle of long-running daemons (am serve-http, cm serve)
 // that NTM spawns. It handles port allocation, health monitoring, and clean shutdown.
 package supervisor
 
@@ -624,6 +624,14 @@ func findAvailablePort() (int, error) {
 func DefaultSpecs() []DaemonSpec {
 	return []DaemonSpec{
 		{
+			Name:        "am",
+			Command:     "am",
+			Args:        []string{"serve-http"},
+			HealthURL:   "http://127.0.0.1:8765/health/liveness",
+			PortFlag:    "--port",
+			DefaultPort: 8765,
+		},
+		{
 			Name:        "cm",
 			Command:     "cm",
 			Args:        []string{"serve"},
@@ -631,19 +639,7 @@ func DefaultSpecs() []DaemonSpec {
 			PortFlag:    "--port",
 			DefaultPort: 8200,
 		},
-		{
-			Name:        "am",
-			Command:     "am",
-			Args:        []string{"serve"},
-			HealthURL:   "http://127.0.0.1:8765/health/liveness",
-			PortFlag:    "--port",
-			DefaultPort: 8765,
-		},
-		{
-			Name:      "bd",
-			Command:   "bd",
-			Args:      []string{"daemon", "--start", "--foreground", "--auto-commit", "--interval", "5s"},
-			HealthCmd: []string{"bd", "daemon", "--health"},
-		},
+		// bd is not included: bd does not support daemon mode.
+		// Use 'bd sync' manually to sync issue state with remote.
 	}
 }

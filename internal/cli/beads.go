@@ -1,17 +1,10 @@
 package cli
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
-
-	"github.com/Dicklesworthstone/ntm/internal/output"
-	"github.com/Dicklesworthstone/ntm/internal/supervisor"
 )
 
 func newBeadsCmd() *cobra.Command {
@@ -189,147 +182,27 @@ func newBeadsDaemonMetricsCmd() *cobra.Command {
 	return cmd
 }
 
-// startBDWithSupervisor starts BD daemon using the NTM supervisor
+// startBDWithSupervisor is a no-op stub: bd does not support daemon mode.
 func startBDWithSupervisor(projectDir, sessionID string, autoCommit, autoPush bool, interval string) error {
-	sup, err := supervisor.New(supervisor.Config{
-		SessionID:  sessionID,
-		ProjectDir: projectDir,
-	})
-	if err != nil {
-		return fmt.Errorf("create supervisor: %w", err)
-	}
-
-	// Build args based on flags
-	args := []string{"daemon", "--start", "--foreground"}
-	if autoCommit {
-		args = append(args, "--auto-commit")
-	}
-	if autoPush {
-		args = append(args, "--auto-push")
-	}
-	if interval != "" {
-		args = append(args, "--interval", interval)
-	}
-
-	spec := supervisor.DaemonSpec{
-		Name:      "bd",
-		Command:   "bd",
-		Args:      args,
-		HealthCmd: []string{"bd", "daemon", "--health"},
-		WorkDir:   projectDir,
-	}
-
-	if err := sup.Start(spec); err != nil {
-		return fmt.Errorf("start bd daemon: %w", err)
-	}
-
-	fmt.Println("BD daemon started via supervisor")
-	return nil
+	return fmt.Errorf("bd does not support daemon mode; use 'bd sync' to sync issue state manually")
 }
 
-// stopBDWithSupervisor stops BD daemon via supervisor
+// stopBDWithSupervisor is a no-op stub: bd does not support daemon mode.
 func stopBDWithSupervisor(projectDir, sessionID string) error {
-	sup, err := supervisor.New(supervisor.Config{
-		SessionID:  sessionID,
-		ProjectDir: projectDir,
-	})
-	if err != nil {
-		return fmt.Errorf("create supervisor: %w", err)
-	}
-
-	if err := sup.Stop("bd"); err != nil {
-		return fmt.Errorf("stop bd daemon: %w", err)
-	}
-
-	fmt.Println("BD daemon stopped")
-	return nil
+	return fmt.Errorf("bd does not support daemon mode; use 'bd sync' to sync issue state manually")
 }
 
-// showBDSupervisorStatus shows BD daemon status from supervisor
+// showBDSupervisorStatus is a no-op stub: bd does not support daemon mode.
 func showBDSupervisorStatus(projectDir, sessionID string) error {
-	// Try to read PID file
-	pidPath := filepath.Join(projectDir, ".ntm", "pids", fmt.Sprintf("bd-%s.pid", sessionID))
-	data, err := os.ReadFile(pidPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			if jsonOutput {
-				return output.PrintJSON(map[string]interface{}{
-					"status":  "not_running",
-					"session": sessionID,
-				})
-			}
-			fmt.Println("BD daemon is not running for this session")
-			return nil
-		}
-		return fmt.Errorf("read pid file: %w", err)
-	}
-
-	var info supervisor.PIDFileInfo
-	if err := json.Unmarshal(data, &info); err != nil {
-		return fmt.Errorf("parse pid file: %w", err)
-	}
-
-	if jsonOutput {
-		return output.PrintJSON(map[string]interface{}{
-			"status":     "running",
-			"pid":        info.PID,
-			"session":    sessionID,
-			"started_at": info.StartedAt,
-		})
-	}
-
-	fmt.Printf("BD daemon status:\n")
-	fmt.Printf("  Status:     running\n")
-	fmt.Printf("  PID:        %d\n", info.PID)
-	fmt.Printf("  Session:    %s\n", sessionID)
-	fmt.Printf("  Started:    %s\n", info.StartedAt.Format("2006-01-02 15:04:05"))
-
-	return nil
+	return fmt.Errorf("bd does not support daemon mode; use 'bd sync' to sync issue state manually")
 }
 
-// startBDDirect starts BD daemon directly without supervisor
+// startBDDirect is a no-op stub: bd does not support daemon mode.
 func startBDDirect(projectDir string, autoCommit, autoPush bool, interval string, foreground bool) error {
-	args := []string{"daemon", "--start"}
-
-	if foreground {
-		args = append(args, "--foreground")
-	}
-	if autoCommit {
-		args = append(args, "--auto-commit")
-	}
-	if autoPush {
-		args = append(args, "--auto-push")
-	}
-	if interval != "" {
-		args = append(args, "--interval", interval)
-	}
-
-	cmd := exec.CommandContext(context.Background(), "bd", args...)
-	cmd.Dir = projectDir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if foreground {
-		// Run in foreground - blocks
-		return cmd.Run()
-	}
-
-	// Start in background
-	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("start bd daemon: %w", err)
-	}
-
-	fmt.Println("BD daemon started")
-	return nil
+	return fmt.Errorf("bd does not support daemon mode; use 'bd sync' to sync issue state manually")
 }
 
-// runBDCommand runs a bd daemon subcommand
+// runBDCommand is a no-op stub: bd does not support daemon mode.
 func runBDCommand(projectDir string, args ...string) error {
-	fullArgs := append([]string{"daemon"}, args...)
-	cmd := exec.CommandContext(context.Background(), "bd", fullArgs...)
-	cmd.Dir = projectDir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	return cmd.Run()
+	return fmt.Errorf("bd does not support daemon mode; use 'bd sync' to sync issue state manually")
 }
