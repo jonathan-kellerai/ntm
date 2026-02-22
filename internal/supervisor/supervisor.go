@@ -31,15 +31,31 @@ const (
 
 // DaemonSpec defines how to start and manage a daemon.
 type DaemonSpec struct {
-	Name        string   `json:"name"`         // Unique identifier: "cm", "bd", "am"
-	Command     string   `json:"command"`      // Command to run: "cm", "bd"
-	Args        []string `json:"args"`         // Arguments: ["serve", "--port", "8765"]
-	HealthURL   string   `json:"health_url"`   // Health check URL: "http://127.0.0.1:8765/health/liveness" or "/health"
-	HealthCmd   []string `json:"health_cmd"`   // Health check command: ["bd", "daemon", "--health"]
-	PortFlag    string   `json:"port_flag"`    // Flag to specify port: "--port"
-	DefaultPort int      `json:"default_port"` // Default port if none specified
-	WorkDir     string   `json:"work_dir"`     // Working directory for the daemon
-	Env         []string `json:"env"`          // Additional environment variables
+	// Name is the unique identifier used for PID files, log files, and map keys: e.g., "am", "cm".
+	Name string `json:"name"`
+	// Command is the executable to run: e.g., "am", "cm".
+	Command string `json:"command"`
+	// Args are the subcommand arguments passed before the port flag: e.g., ["serve-http"] for am, ["serve"] for cm.
+	Args []string `json:"args"`
+	// HealthURL is the HTTP endpoint polled to determine daemon health.
+	// The host/port is rewritten to the actual allocated port at startup.
+	// Mutually exclusive with HealthCmd; HealthURL takes precedence when both are set.
+	HealthURL string `json:"health_url"`
+	// HealthCmd is an alternative command-based health check: e.g., ["bd", "daemon", "--health"].
+	// Used only when HealthURL is empty.
+	HealthCmd []string `json:"health_cmd"`
+	// PortFlag is the CLI flag used to pass the port to the daemon process: typically "--port".
+	// If empty, no port flag is appended and DefaultPort is unused.
+	PortFlag string `json:"port_flag"`
+	// DefaultPort is the preferred port for this daemon.
+	// If the port is already in use, the supervisor allocates a random available port instead.
+	DefaultPort int `json:"default_port"`
+	// WorkDir is the working directory for the daemon process.
+	// Defaults to the session's project directory when empty.
+	WorkDir string `json:"work_dir"`
+	// Env holds additional environment variables injected into the daemon process,
+	// in "KEY=VALUE" format, merged on top of the parent process environment.
+	Env []string `json:"env"`
 }
 
 // ManagedDaemon represents a running daemon process.
@@ -621,6 +637,9 @@ func findAvailablePort() (int, error) {
 }
 
 // DefaultSpecs returns the default daemon specs for NTM.
+// am is listed first because DefaultAgentMailURL is hardcoded to port 8765; cm is
+// assigned 8200. The supervisor dynamically checks port availability and falls back
+// to a random port if the default is occupied.
 func DefaultSpecs() []DaemonSpec {
 	return []DaemonSpec{
 		{

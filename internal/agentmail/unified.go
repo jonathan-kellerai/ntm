@@ -10,6 +10,9 @@ import (
 	"github.com/Dicklesworthstone/ntm/internal/bd"
 )
 
+// UnifiedMessage is a normalised view of a message from any supported channel
+// (Agent Mail or bd). It allows callers to work with a single type regardless
+// of the underlying transport.
 type UnifiedMessage struct {
 	ID        string    `json:"id"`
 	Channel   string    `json:"channel"` // "agentmail" or "bd"
@@ -34,6 +37,9 @@ type bdMessageClient interface {
 	Ack(ctx context.Context, id string) error
 }
 
+// UnifiedMessenger provides a single inbox and send interface that fans out
+// to both Agent Mail and bd message channels. Either client may be nil;
+// messages from unavailable channels are silently skipped.
 type UnifiedMessenger struct {
 	amClient   agentMailClient
 	bdClient   bdMessageClient
@@ -41,6 +47,8 @@ type UnifiedMessenger struct {
 	agentName  string
 }
 
+// NewUnifiedMessenger creates a UnifiedMessenger backed by the provided Agent Mail
+// and bd clients. Pass nil for either client to disable that channel.
 func NewUnifiedMessenger(am *Client, bd *bd.MessageClient, projectKey, agentName string) *UnifiedMessenger {
 	var amClient agentMailClient
 	if am != nil {

@@ -706,7 +706,11 @@ func (s *Server) handleMemoryDaemonStart(w http.ResponseWriter, r *http.Request)
 	}, reqID)
 }
 
-// startMemoryDaemonAsync starts the memory daemon in the background
+// startMemoryDaemonAsync starts the cm memory daemon in the background.
+// The default port is 8200, chosen to avoid conflict with am (Agent Mail), which
+// listens on 8765. These two daemons run concurrently within an NTM session, so
+// they must occupy separate ports. If 8200 is already in use the caller is
+// responsible for passing an alternate port via MemoryDaemonRequest.Port.
 func (s *Server) startMemoryDaemonAsync(port int, sessionID string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
