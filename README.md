@@ -924,6 +924,15 @@ This enables AI agents to:
 
 ## Architecture
 
+### Architecture Decision Records
+
+Key design decisions are documented in [`docs/adr/`](docs/adr/):
+- [ADR-001: Supervisor daemon port allocation](docs/adr/ADR-001.md)
+- [ADR-002: bd removed from supervisor](docs/adr/ADR-002.md)
+- [ADR-003: am serve-http subcommand](docs/adr/ADR-003.md)
+- [ADR-004: cm dev wrapper vs compiled binary](docs/adr/ADR-004.md)
+- [ADR-005: Git remote split](docs/adr/ADR-005.md)
+
 ### Pane Naming Convention
 
 Agent panes are named using the pattern: `<project>__<agent>_<number>`
